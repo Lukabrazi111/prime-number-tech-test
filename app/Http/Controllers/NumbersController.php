@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NumbersRequest;
 use App\Jobs\PrimeNumberCheck;
+use Illuminate\Support\Facades\Bus;
 
 class NumbersController extends Controller
 {
@@ -16,7 +17,8 @@ class NumbersController extends Controller
     {
         // Dispatch job per number
         foreach ($request->input('numbers') as $number) {
-            PrimeNumberCheck::dispatch($number);
+            Bus::dispatch(new PrimeNumberCheck($number));
+//            PrimeNumberCheck::dispatch($number);
         }
 
         return response()->json(['success' => true]);
