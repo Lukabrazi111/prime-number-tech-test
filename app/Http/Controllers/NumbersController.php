@@ -18,7 +18,6 @@ class NumbersController extends Controller
         // Dispatch job per number
         foreach ($request->input('numbers') as $number) {
             Bus::dispatch(new PrimeNumberCheck($number));
-//            PrimeNumberCheck::dispatch($number);
         }
 
         return response()->json(['success' => true]);
