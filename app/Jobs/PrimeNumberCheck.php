@@ -2,18 +2,19 @@
 
 namespace App\Jobs;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 
 class PrimeNumberCheck implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, Batchable;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(protected int $number)
+    public function __construct(protected array $numbers)
     {
     }
 
@@ -22,8 +23,10 @@ class PrimeNumberCheck implements ShouldQueue
      */
     public function handle(): void
     {
-        if ($this->isPrimeNumber()) {
-            Log::channel('prime-number')->info("$this->number: number found at " . now());
+        foreach ($this->numbers as $number) {
+            if ($this->isPrimeNumber($number)) {
+                Log::channel('prime-number')->info("$number: number found at " . now());
+            }
         }
     }
 
@@ -32,14 +35,14 @@ class PrimeNumberCheck implements ShouldQueue
      *
      * @return boolean
      */
-    private function isPrimeNumber(): bool
+    private function isPrimeNumber(int $number): bool
     {
-        if ($this->number == 1) {
+        if ($number == 1) {
             return false;
         }
 
-        for ($i = 2; $i <= $this->number / 2; $i++) {
-            if ($this->number % $i == 0) {
+        for ($i = 2; $i <= $number / 2; $i++) {
+            if ($number % $i == 0) {
                 return false;
             }
         }

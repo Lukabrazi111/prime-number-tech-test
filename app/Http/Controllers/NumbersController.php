@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\NumbersRequest;
-use App\Jobs\PrimeNumberCheck;
+use App\Jobs\ChunkNumbers;
 use Illuminate\Support\Facades\Bus;
 
 class NumbersController extends Controller
@@ -16,9 +16,7 @@ class NumbersController extends Controller
     public function submitNumbers(NumbersRequest $request)
     {
         // Dispatch job per number
-        foreach ($request->input('numbers') as $number) {
-            Bus::dispatch(new PrimeNumberCheck($number));
-        }
+        Bus::dispatch(new ChunkNumbers($request->input('numbers')));
 
         return response()->json(['success' => true]);
     }
